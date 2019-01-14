@@ -12,9 +12,11 @@ urlpatterns = [
     path('weibo',
          views.create_weibo),
     path('weibo/<int:pk>',
-         views.weibo.as_view()),
+         views.Weibo.as_view()),
     path('weibo/<int:pk>/comment',
          views.create_comment),
+    path('weibo/<int:pk>/like',
+         views.like),
     path('comment/<int:pk>',
-         views.comment.as_view()),
+         views.Comment.as_view()),
 ]

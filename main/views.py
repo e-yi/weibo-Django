@@ -1,13 +1,10 @@
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from main.permissions import IsOwnerOrReadOnly
 from .serializers import *
 
-
-# TODO 增加用户认证
-# TODO 填充view
 
 @api_view(['GET'])
 def weibo_info(request):
@@ -36,10 +33,14 @@ def weibo_list(request, start=-1, n=20):
 
 @api_view(['POST'])
 def create_weibo(request):
-    pass  # TODO
+    serializer = PostSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(owner=request.user)
+        return Response(status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class weibo(generics.RetrieveUpdateDestroyAPIView):
+class Weibo(generics.RetrieveUpdateDestroyAPIView):
     """
     微博详情及该微博的评论 : 查
     微博 : 删改
@@ -52,10 +53,14 @@ class weibo(generics.RetrieveUpdateDestroyAPIView):
 
 @api_view(['POST'])
 def create_comment(request):
-    pass  # TODO
+    serializer = CommentSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save(owner=request.user)
+        return Response(status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class comment(generics.DestroyAPIView):
+class Comment(generics.DestroyAPIView):
     """
     评论:删
     """
@@ -63,3 +68,12 @@ class comment(generics.DestroyAPIView):
     serializer_class = CommentSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,
                           IsOwnerOrReadOnly,)
+
+
+# TODO
+@api_view(['PUT'])
+def like(request, pk):
+    """
+    点赞
+    """
+    pass
