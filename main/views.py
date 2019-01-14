@@ -1,5 +1,5 @@
 from rest_framework import generics, permissions, status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 
 from main.permissions import IsOwnerOrReadOnly
@@ -26,17 +26,18 @@ def weibo_list(request, start=-1, n=20):
     if start == -1:
         posts = Post.objects.order_by('-id')[:n]
     else:
-        posts = Post.objects.filter('id__lte=' + str(start)).order_by('-id')[:n]
+        posts = Post.objects.filter(id__lte= start).order_by('-id')[:n]
     serializer = PostSerializer(posts, many=True)
     return Response(data=serializer.data)
 
 
 @api_view(['POST'])
+@permission_classes((permissions.IsAuthenticated,))
 def create_weibo(request):
     serializer = PostSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save(owner=request.user)
-        return Response(status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -52,11 +53,12 @@ class Weibo(generics.RetrieveUpdateDestroyAPIView):
 
 
 @api_view(['POST'])
+@permission_classes((permissions.IsAuthenticated,))
 def create_comment(request):
     serializer = CommentSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save(owner=request.user)
-        return Response(status=status.HTTP_201_CREATED)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -71,7 +73,13 @@ class Comment(generics.DestroyAPIView):
 
 
 # TODO
+@api_view(['POST'])
+def create_user(request):
+    pass
+
+# TODO
 @api_view(['PUT'])
+@permission_classes((permissions.IsAuthenticated,))
 def like(request, pk):
     """
     点赞

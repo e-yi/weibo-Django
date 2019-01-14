@@ -79,6 +79,11 @@ def photo_post_delete_handler(sender, **kwargs):
     当删除微博时删除对应图片
     """
     photo = kwargs['instance']
-    storage, path = photo.image.storage, photo.image.path
-    storage.delete(path)
+    try:
+        storage, path = photo.image.storage, photo.image.path
+        storage.delete(path)
+    except ValueError as e:
+        print(e)
+        pass
+
 

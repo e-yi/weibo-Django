@@ -12,6 +12,7 @@ mysqlclient = "*"
 pillow = "*"
 djangorestframework = "*"
 six = "*"
+django-rest-auth = "*"
 
 [requires]
 python_version = "3.6"

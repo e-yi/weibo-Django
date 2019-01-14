@@ -68,7 +68,7 @@ class PostSerializer(serializers.ModelSerializer):
     author_name = serializers.SerializerMethodField()
     like_count = serializers.SerializerMethodField(read_only=True)
     image = Base64ImageField(
-        max_length=None, use_url=True,
+        max_length=None, use_url=True, required=False
     )
 
     class Meta:
@@ -92,7 +92,6 @@ class PostDetailSerializer(serializers.ModelSerializer):
         depth = 1
 
     def get_who_like(self, obj):
-        print(obj.like.all())
         return [owner.profile.nickname for owner in obj.like.all()]
 
     def get_author_name(self, obj):
