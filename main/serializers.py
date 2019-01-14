@@ -33,11 +33,11 @@ class Base64ImageField(serializers.ImageField):
                 self.fail('invalid_image')
 
             # Generate file name:
-            file_name = str(uuid.uuid4())[:12] # 12 characters are more than enough.
+            file_name = str(uuid.uuid4())[:12]  # 12 characters are more than enough.
             # Get the file name extension:
             file_extension = self.get_file_extension(file_name, decoded_file)
 
-            complete_file_name = "%s.%s" % (file_name, file_extension, )
+            complete_file_name = "%s.%s" % (file_name, file_extension,)
 
             data = ContentFile(decoded_file, name=complete_file_name)
 
@@ -50,7 +50,6 @@ class Base64ImageField(serializers.ImageField):
         extension = "jpg" if extension == "jpeg" else extension
 
         return extension
-
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -85,6 +84,7 @@ class PostSerializer(serializers.ModelSerializer):
 class PostDetailSerializer(serializers.ModelSerializer):
     author_name = serializers.SerializerMethodField()
     who_like = serializers.SerializerMethodField()
+    comments = CommentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Post
@@ -107,5 +107,3 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_nickname(self, obj):
         return obj.profile.nickname
-
-
