@@ -2,14 +2,18 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('weibo/',
+    path('info',
          views.weibo_info),
     path('weibo/list/',
          views.weibo_list),
-    path('weibo/list/<int:from>/<int:to>',
+    path('weibo/list/<int:start>/<int:n>',
          views.weibo_list),
+    path('weibo',
+         views.create_weibo),
     path('weibo/<int:pk>',
-         views.weibo),
+         views.weibo.as_view()),
+    path('weibo/<int:pk>/comment',
+         views.create_comment),
     path('comment/<int:pk>',
-         views.comment),
+         views.comment.as_view()),
 ]
