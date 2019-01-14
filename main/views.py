@@ -1,7 +1,8 @@
-from rest_framework import generics
+from rest_framework import generics, permissions
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from main.permissions import IsOwnerOrReadOnly
 from .serializers import *
 
 
@@ -45,6 +46,8 @@ class weibo(generics.RetrieveUpdateDestroyAPIView):
     """
     queryset = Post.objects.all()
     serializer_class = PostDetailSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
+                          IsOwnerOrReadOnly,)
 
 
 @api_view(['POST'])
@@ -58,3 +61,5 @@ class comment(generics.DestroyAPIView):
     """
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
+                          IsOwnerOrReadOnly,)

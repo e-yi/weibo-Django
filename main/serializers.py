@@ -1,16 +1,17 @@
 from rest_framework import serializers
+from django.contrib.auth.models import User
 from .models import *
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    name = serializers.SerializerMethodField('get_user_name')
+    name = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
         fields = ('id', 'name', 'create_time', 'text')
 
-    def get_user_name(self, obj):
-        return obj.author.profile.nickname
+    def get_name(self, obj):
+        return obj.owner.profile.nickname
 
 
 class PostSerializer(serializers.ModelSerializer):
@@ -25,7 +26,7 @@ class PostSerializer(serializers.ModelSerializer):
         return obj.like.all().count()
 
     def get_author_name(self, obj):
-        return obj.author.profile.nickname
+        return obj.owner.profile.nickname
 
 
 class PostDetailSerializer(serializers.ModelSerializer):
@@ -39,7 +40,18 @@ class PostDetailSerializer(serializers.ModelSerializer):
 
     def get_who_like(self, obj):
         print(obj.like.all())
-        return [user.profile.nickname for user in obj.like.all()]
+        return [owner.profile.nickname for owner in obj.like.all()]
 
     def get_author_name(self, obj):
-        return obj.author.profile.nickname
+        return obj.owner.profile.nickname
+
+
+class UserSerializer(serializers.ModelSerializer):
+    nickname = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'nickname')
+
+    def get_nickname(self, obj):
+        return obj.profile.nickname

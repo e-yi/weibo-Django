@@ -29,7 +29,7 @@ class Profile(models.Model):
         (0, '未知')
     ]
 
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    owner = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
     nickname = models.CharField(max_length=15, blank=False, default="user", verbose_name='昵称')
     bio = models.TextField(max_length=500, blank=True, verbose_name='个人简介')
     location = models.CharField(max_length=30, blank=True, verbose_name='所在地')
@@ -48,7 +48,7 @@ class Post(models.Model):
     微博，包括：
     作者、发布时间、修改时间、文字、图片、点赞数
     """
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     create_time = models.DateTimeField(auto_now_add=True, editable=False, verbose_name="创建时间")
     modify_time = models.DateTimeField(auto_now=True, verbose_name='修改时间')
     image = models.ImageField(blank=True, verbose_name="图片", upload_to='post_image')
@@ -64,7 +64,7 @@ class Comment(models.Model):
     评论，包括：
     作者，评论对象，评论时间，文字
     """
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
     to = models.ForeignKey(Post, on_delete=models.CASCADE,
                            verbose_name="微博", related_name='comments')
     create_time = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
