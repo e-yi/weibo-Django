@@ -102,12 +102,12 @@ class PostDetailSerializer(serializers.ModelSerializer):
         return obj.owner.profile.nickname
 
 
-class UserSerializer(serializers.ModelSerializer):
-    nickname = serializers.SerializerMethodField()
+class ProfileSerializer(serializers.ModelSerializer):
+    username = serializers.SerializerMethodField()
 
     class Meta:
-        model = User
+        model = Profile
         fields = ('id', 'username', 'nickname')
 
-    def get_nickname(self, obj):
-        return obj.profile.nickname
+    def get_username(self, obj):
+        return obj.owner.username

@@ -1,6 +1,7 @@
 from rest_framework import generics, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from main.permissions import IsOwnerOrReadOnly
 from .serializers import *
@@ -11,13 +12,12 @@ def weibo_info(request):
     """
     获取基本信息
     """
-    data = {}
-    data['weibo_count'] = Post.objects.count()
+    data = {'weibo_count': Post.objects.count()}
     return Response(data=data)
 
 
 @api_view(['GET'])
-def weibo_list(request, start=-1, n=20):
+def weibo_list(request, start=-1, n=5):
     """
     获取微博列表
     @:param start 从微博id=start开始
@@ -26,8 +26,8 @@ def weibo_list(request, start=-1, n=20):
     if start == -1:
         posts = Post.objects.order_by('-id')[:n]
     else:
-        posts = Post.objects.filter(id__lte=start).order_by('-id')[:n]
-    serializer = PostSerializer(posts, many=True)
+        posts = Post.objects.filter(id__lt=start).order_by('-id')[:n]
+    serializer = PostDetailSerializer(posts, many=True)
     return Response(data=serializer.data)
 
 
@@ -72,10 +72,24 @@ class Comment(generics.DestroyAPIView):
                           IsOwnerOrReadOnly,)
 
 
-# TODO
-@api_view(['POST'])
-def create_user(request):
-    pass
+class UserInfo(APIView):
+    def get(self, request):
+        user = User.objects.get(pk=request.user.id)
+        serializer = ProfileSerializer(user.profile)
+        return Response(data=serializer.data)
+
+    def post(self, request):
+        # 注册
+        pass
+
+
+class UpdateUserInfo(generics.UpdateAPIView):
+    """
+    UserInfo
+    """
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    permission_classes = (permissions.IsAuthenticated,)
 
 
 # TODO
