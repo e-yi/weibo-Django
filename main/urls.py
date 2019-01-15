@@ -5,7 +5,7 @@ urlpatterns = [
     # path('api-auth/', include('rest_framework.urls')),
     path('info',
          views.weibo_info),
-    path('weibo/list/',
+    path('weibo/list',
          views.weibo_list),
     path('weibo/list/<int:start>/<int:n>',
          views.weibo_list),

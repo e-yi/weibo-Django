@@ -26,7 +26,7 @@ def weibo_list(request, start=-1, n=20):
     if start == -1:
         posts = Post.objects.order_by('-id')[:n]
     else:
-        posts = Post.objects.filter(id__lte= start).order_by('-id')[:n]
+        posts = Post.objects.filter(id__lte=start).order_by('-id')[:n]
     serializer = PostSerializer(posts, many=True)
     return Response(data=serializer.data)
 
@@ -76,6 +76,7 @@ class Comment(generics.DestroyAPIView):
 @api_view(['POST'])
 def create_user(request):
     pass
+
 
 # TODO
 @api_view(['PUT'])

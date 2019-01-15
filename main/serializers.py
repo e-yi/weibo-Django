@@ -66,16 +66,20 @@ class CommentSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     author_name = serializers.SerializerMethodField()
     like_count = serializers.SerializerMethodField(read_only=True)
+    comment_count = serializers.SerializerMethodField(read_only=True)
     image = Base64ImageField(
         max_length=None, use_url=True, required=False
     )
 
     class Meta:
         model = Post
-        fields = ('id', 'author_name', 'create_time', 'image', 'text', 'like_count')
+        fields = ('id', 'author_name', 'create_time', 'image', 'text', 'like_count', 'comment_count')
 
     def get_like_count(self, obj):
         return obj.like.all().count()
+
+    def get_comment_count(self, obj):
+        return obj.comments.all().count()
 
     def get_author_name(self, obj):
         return obj.owner.profile.nickname
