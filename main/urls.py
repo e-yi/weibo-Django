@@ -2,12 +2,11 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    # path('api-auth/', include('rest_framework.urls')),
     path('info',
          views.weibo_info),
-    path('user_info',
+    path('user',
          views.UserInfo.as_view()),
-    path('user_info/<int:pk>',
+    path('user/<int:pk>',
          views.UpdateUserInfo.as_view()),
     path('weibo/list',
          views.weibo_list),

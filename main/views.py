@@ -74,13 +74,17 @@ class Comment(generics.DestroyAPIView):
 
 class UserInfo(APIView):
     def get(self, request):
-        user = User.objects.get(pk=request.user.id)
+        user = User.objects.get(pk=request.user.id) # todo 有问题，用get_object_or_404解决
         serializer = ProfileSerializer(user.profile)
         return Response(data=serializer.data)
 
     def post(self, request):
         # 注册
-        pass
+        serializer = CreateUserSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpdateUserInfo(generics.UpdateAPIView):

@@ -6,13 +6,17 @@ from .models import *
 
 
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('get_user', 'nickname', 'gender', 'location')
+    list_display = ('get_user', 'get_username', 'nickname', 'gender', 'location')
     list_filter = ('gender',)
     search_fields = ('nickname',)
 
     def get_user(self, obj):
-        return obj.user.id
+        return obj.owner.id
 
+    def get_username(self, obj):
+        return obj.owner.username
+
+    get_username.short_description = 'user'
     get_user.short_description = 'userId'
     get_user.admin_order_field = 'user__id'
 

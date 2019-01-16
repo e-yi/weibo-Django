@@ -55,6 +55,8 @@ class Base64ImageField(serializers.ImageField):
 class CommentSerializer(serializers.ModelSerializer):
     name = serializers.SerializerMethodField()
 
+    # create_time = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S")
+
     class Meta:
         model = Comment
         fields = ('id', 'name', 'create_time', 'text')
@@ -67,6 +69,7 @@ class PostSerializer(serializers.ModelSerializer):
     author_name = serializers.SerializerMethodField()
     like_count = serializers.SerializerMethodField(read_only=True)
     comment_count = serializers.SerializerMethodField(read_only=True)
+    # create_time = serializers.DateTimeField(format="%Y-%m-%dT%H:%M:%S")
     image = Base64ImageField(
         max_length=None, use_url=True, required=False
     )
@@ -111,3 +114,21 @@ class ProfileSerializer(serializers.ModelSerializer):
 
     def get_username(self, obj):
         return obj.owner.username
+
+class CreateUserSerializer(serializers.ModelSerializer):
+    nickname = serializers.CharField(max_length=15, write_only=True)
+
+    class Meta:
+        model = User
+        fields = ('nickname', 'username', 'password')
+        extra_kwargs = {'password': {'write_only': True}, }
+
+    def create(self, validated_data):
+        user = User(
+            username=validated_data['username']
+        )
+        user.set_password(validated_data['password'])
+        user.save()
+        user.profile.nickname = validated_data['nickname']
+        user.profile.save() # or just call user.save()
+        return user
