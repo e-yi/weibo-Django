@@ -115,6 +115,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     def get_username(self, obj):
         return obj.owner.username
 
+
 class CreateUserSerializer(serializers.ModelSerializer):
     nickname = serializers.CharField(max_length=15, write_only=True)
 
@@ -130,5 +131,5 @@ class CreateUserSerializer(serializers.ModelSerializer):
         user.set_password(validated_data['password'])
         user.save()
         user.profile.nickname = validated_data['nickname']
-        user.profile.save() # or just call user.save()
+        user.profile.save()  # or just call user.save()
         return user

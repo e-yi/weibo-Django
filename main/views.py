@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import generics, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -97,11 +98,25 @@ class UpdateUserInfo(generics.UpdateAPIView):
     permission_classes = (permissions.IsAuthenticated,)
 
 
-# TODO
-@api_view(['PUT'])
+@api_view(['POST', ])
 @permission_classes((permissions.IsAuthenticated,))
 def like(request, pk):
     """
     点赞
     """
-    pass
+    try:
+        act = request.data['action']
+    except KeyError:
+        return Response(data='need action', status=status.HTTP_400_BAD_REQUEST)
+    print(act)
+    post = get_object_or_404(Post, id=pk)
+    if act == 'on':
+        post.like.add(request.user)
+        return Response(data='liked', status=status.HTTP_200_OK)
+    elif act == 'off':
+        post.like.remove(request.user)
+        return Response(data='unliked', status=status.HTTP_200_OK)
+    else:
+        return Response(data='invalid action', status=status.HTTP_400_BAD_REQUEST)
+
+
